@@ -2,6 +2,6 @@
 
 __version__ = "0.1.3"
 
-from plist2json_pkg.__main__ import main
+from pkg.__main__ import main
 
 __all__ = ["main"]
