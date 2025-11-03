@@ -1,13 +1,32 @@
 # plist2json
 
-Simple command-line tool to convert Apple Property List (plist) files from binary or XML to JSON format.
+Zero-external-dependency command-line tool to convert Apple Property List (plist) files from binary or XML to JSON format.
 
 
 ## Description
 
 `plist2json` is a Python-based utility that converts plist files from binary or XML to JSON format. Input is read from stdin (default) or command-line argument, and output is written to stdout. It handles non-serializable objects gracefully and provides an option to format the JSON indentation. 
 
-The project depends only on the Python standard library as distributed by default with Apple macOS for easy installation even in offline or air-gapped environments (see [Install from release package](#install-from-release-package)).
+The conventional `plutil` refuses to convert to JSON many standard plist files found across macOS due to unsupported data types, irregular encodings, or other issues. You'll find really useful error messages such as:
+
+```bash
+$ plutil -convert json -o- problematic.plist
+<stdin>: invalid object in plist for destination format
+
+$ plutil -convert xml1 -o- problematic.plist
+# ...valid XML output...
+$ plutil -convert xml1 -o- problematic.plist | plutil -convert json -o- -
+<stdin>: invalid object in plist for destination format
+
+$ plutil -convert binary1 -o- problematic.plist | plutil -convert json -o- -
+<stdin>: invalid object in plist for destination format
+```
+
+These are often benign problems unrelated to the actual data content such as trailing or leading `\0` or `\n` bytes, non-standard date formats, etc.
+
+This tool instead uses the Python `plistlib` module, which is much more forgiving and can successfully parse and convert many such problematic plists to JSON.
+
+The project depends only on the Python standard library as distributed by default with Apple macOS for easy installation even in offline or air-gapped environments.
 
 
 ## Features
@@ -22,18 +41,6 @@ The project depends only on the Python standard library as distributed by defaul
 
 
 ## Installation
-
-
-### Install from source
-
-```bash
-git clone https://github.com/yourusername/plist2json.git
-cd plist2json
-pip install .
-```
-
-
-### Install from release package
 
 Download the latest released wheel package (*.whl) and install using pip:
 
@@ -54,68 +61,26 @@ The wheel package includes all necessary files and can be installed without Inte
 
 ### Basic usage
 
-Convert a plist file to JSON:
+Convert a plist file from any supported format to JSON:
 
 ```bash
-plist2json input.plist
+plist2json input.plist          # read from file
+cat input.plist | plist2json    # read from stdin
 ```
 
-
-### Read from stdin
+The output JSON is pretty-printed with an indentation of 4 spaces by default.
 
 ```bash
-cat input.plist | plist2json
+plist2json -i 2     input.plist    # 2 spaces
+plist2json -i $'\t' input.plist    # 1 tab (bash or zsh)
+plist2json -i ""    input.plist    # compact, disable pretty-printing
 ```
 
-
-### Custom indentation
-
-Use a specific number of spaces for indentation:
+Use with `jq` to filter and process JSON output
 
 ```bash
-plist2json -i 2 input.plist
-```
-
-Use tab characters for indentation (bash or zsh):
-
-```bash
-plist2json -i $'\t' input.plist
-```
-
-Output compact JSON (no added whitespace):
-
-```bash
-plist2json -i "" input.plist
-```
-
-
-### Pipeline examples
-
-Convert and save to a file:
-
-```bash
-plist2json input.plist > output.json
-```
-
-Process multiple plist files (bash or zsh):
-
-```bash
-for file in *.plist; do
-    plist2json "$file" > "${file%.plist}.json"
-done
-```
-
-
-### Use with `jq` to filter and process JSON output
-
-```bash
-# Extract a specific key's value
-plist2json input.plist | jq '.someKey'
-```
-
-```bash
-# Convert an array in the plist to CSV format
-plist2json input.plist | jq -r '.anotherKey | @csv'
+plist2json input.plist | jq '.someKey'             # extract value as JSON
+plist2json input.plist | jq -r '.tableKey | @csv'  # extract table as CSV
 ```
 
 
@@ -144,13 +109,13 @@ optional arguments:
 ```bash
 $ plist2json example.plist
 {
-  "key1": "value1",
-  "key2": 42,
-  "array": [
-    "item1",
-    "item2",
-    "item3"
-  ]
+    "key1": "value1",
+    "key2": 42,
+    "array": [
+        "item1",
+        "item2",
+        "item3"
+    ]
 }
 ```
 
@@ -174,27 +139,15 @@ plist2json example.plist | jq -r '.array | @tsv'
 ```
 
 
-## Error Handling
-
-The tool provides clear error messages for common issues:
-
-- **File not found**: `Error: File 'missing.plist' not found`
-- **Invalid plist format**: `Error: Invalid plist format - <details>`
-- **Other errors**: `Error: <error message>`
-
-
-### Exit codes:
-
-- `0`: Success
-- `1`: Error occurred
-
-
 ## Development
 
-
-### Running tests
+Clone the repository, install in editable mode, and run tests:
 
 ```bash
+git clone https://github.com/yourusername/plist2json.git
+cd plist2json
+pip install -e .
+# Run tests to verify installation
 python -m pytest tests/
 ```
 
@@ -208,12 +161,14 @@ The project includes a `publish.sh` script that automates the release process. I
 - Commit version changes and create a git tag
 - Create a GitHub release with the built packages
 
-#### Prerequisites
+
+*Prerequisites:*
 
 - [GitHub CLI](https://cli.github.com/) (`gh`) installed and authenticated
 - Python build tools (`build` and `twine` will be installed automatically)
 
-#### Usage
+
+*Usage:*
 
 ```bash
 # Publish with auto-generated release notes
