@@ -1,6 +1,6 @@
 """plist2json - Convert plist files to JSON format."""
 
-__version__ = "0.1.4"
+__version__ = "0.1.5"
 
 from pkg.__main__ import main
 

@@ -8,7 +8,7 @@ with open("README.md", "r", encoding="utf-8") as fh:
 
 setup(
     name="plist2json",
-    version="0.1.4",
+    version="0.1.5",
     author="ardnew",
     author_email="andrew@ardnew.com",
     description="Convert Apple plist files to JSON format",
