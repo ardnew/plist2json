@@ -115,7 +115,7 @@ plist2json input.plist | jq '.someKey'
 
 ```bash
 # Convert an array in the plist to CSV format
-plist2json input.plist | jq -r '.anotherKey[] | @csv'
+plist2json input.plist | jq -r '.anotherKey | @csv'
 ```
 
 
