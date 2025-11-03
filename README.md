@@ -68,12 +68,11 @@ plist2json input.plist          # read from file
 cat input.plist | plist2json    # read from stdin
 ```
 
-The output JSON is pretty-printed with an indentation of 4 spaces by default.
+The output JSON is printed compactly without any extra whitespace by default.
 
 ```bash
 plist2json -i 2     input.plist    # 2 spaces
 plist2json -i $'\t' input.plist    # 1 tab (bash or zsh)
-plist2json -i ""    input.plist    # compact, disable pretty-printing
 ```
 
 Use with `jq` to filter and process JSON output
@@ -108,6 +107,14 @@ optional arguments:
 
 ```bash
 $ plist2json example.plist
+{"key1":"value1","key2":42,"array":["item1","item2"]}
+```
+
+
+### Example 2: Formatted output
+
+```bash
+$ plist2json -i 4 example.plist
 {
     "key1": "value1",
     "key2": 42,
@@ -117,14 +124,6 @@ $ plist2json example.plist
         "item3"
     ]
 }
-```
-
-
-### Example 2: Compact output
-
-```bash
-$ plist2json -i "" example.plist
-{"key1":"value1","key2":42,"array":["item1","item2"]}
 ```
 
 
