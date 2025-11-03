@@ -4,11 +4,11 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "plist2json"
-version = "0.1.5"
+version = "0.1.6"
 description = "Convert Apple plist files to JSON format"
 readme = "README.md"
 requires-python = ">=3.7"
-license = {text = "MIT"}
+license = "MIT"
 license-files = ["LICENSE"]
 authors = [
     {name = "ardnew", email = "andrew@ardnew.com"}
