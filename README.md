@@ -1,5 +1,9 @@
 # plist2json
 
+![Coverage](https://img.shields.io/badge/coverage-100%25-brightgreen)
+[![Python 3.7+](https://img.shields.io/badge/python-3.7+-blue.svg)](https://www.python.org/downloads/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
 Zero-external-dependency command-line tool to convert Apple Property List (plist) files from binary or XML to JSON format.
 
 
@@ -149,6 +153,39 @@ pip install -e .
 # Run tests to verify installation
 python -m pytest tests/
 ```
+
+
+## Testing
+
+This project maintains **100% test coverage** with a comprehensive test suite. The tests cover all functionality including:
+
+- All input/output modes (file, stdin)
+- Various indentation options
+- Error handling and edge cases
+- Unicode and special character support
+- All data types and structures
+
+### Running Tests
+
+Install test dependencies:
+```bash
+pip install -r requirements-dev.txt
+```
+
+Run the test suite:
+```bash
+# Run all tests
+pytest tests/
+
+# Run with coverage report
+pytest tests/ --cov=pkg --cov-report=term-missing --cov-branch
+
+# Generate HTML coverage report
+pytest tests/ --cov=pkg --cov-report=html
+# Open htmlcov/index.html in your browser
+```
+
+For more details about the test suite, see [tests/README.md](tests/README.md).
 
 
 ### Publishing a release
